@@ -1,0 +1,25 @@
+{
+  "devDependencies": {
+    "@tauri-apps/cli": "^1.2.0"
+  },
+  "name": "plan2go_desktop",
+  "description": "Plan2Go is an open source calender software made for the YH4F 2023.",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tauri": "tauri",
+    "dev": "tauri dev",
+    "build": "tauri build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://edugit.org/thedutchprogrammers/plan2go.git"
+  },
+  "keywords": [
+    "plan2go",
+    "yh4f"
+  ],
+  "author": "Miniontoby",
+  "license": "ISC"
+}
