@@ -1,0 +1,32 @@
+image: "rust:latest"
+
+before_script:
+  - apt-get update -yqq
+  - apt-get install -yqq --no-install-recommends build-essential nodejs npm libgtk-3-dev libwebkit2gtk-4.0-dev libayatana-appindicator3-dev librsvg2-dev
+
+stages:
+  - release
+
+release:
+  stage: release
+#  scripts:
+#  - image: rust:latest # linux
+#    script:
+#    - apt-get update -yqq
+#    - apt-get install -yqq --no-install-recommends build-essential nodejs npm libgtk-3-dev libwebkit2gtk-4.0-dev libayatana-appindicator3-dev librsvg2-dev
+#    - npm install
+#    - npm run build
+#  - image: mcr.microsoft.com/windows:ltsc2019
+#    script:
+#    - npm install
+#    - npm run build
+  script:
+    - npm install
+    - npm run build
+  artifacts:
+    paths:
+      - src-tauri/target/release/bundle/deb/*.deb
+      - src-tauri/target/release/bundle/appimage/*.AppImage
+      - src-tauri/target/release/bundle/msi/*.msi
+#  rules:
+#    - if: $CI_COMMIT_TAG
