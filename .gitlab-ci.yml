@@ -1,4 +1,4 @@
-image: "rust:latest" # "cimg/rust:1.65.0-node"
+#image: "rust:latest" # "cimg/rust:1.65.0-node"
 stages:
   - build
   - release
@@ -66,6 +66,7 @@ build-windows:
 
 release:
   stage: release
+  image: "rust:latest"
   script:
     - apt-get update -yqq
     - apt-get install -yqq --no-install-recommends build-essential nodejs npm libgtk-3-dev libwebkit2gtk-4.0-dev libayatana-appindicator3-dev librsvg2-dev
