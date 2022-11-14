@@ -8,6 +8,9 @@ Plan2Go is an open source calender software made for the YH4F 2023. It is fully 
 # How2Use
 Using our calander is really easy. You add an event to your personal calander and you can see it appear on there. You can also export the calender to your favorite mobile calander.
 
+# Releases
+[![Release](https://github.com/TheDutchProgrammers/Plan2Go/actions/workflows/build-and-release.yml/badge.svg?branch=DesktopApp)](https://github.com/TheDutchProgrammers/Plan2Go/actions/workflows/build-and-release.yml)
+
 # Credits
 Plan2Go is made by Speedy (Michiel) With assistance of Miniontoby.
 
