@@ -1,11 +1,47 @@
+/*
+    Plan2Go
+    Copyright (C) 2022  TheDutchProgrammers
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
+:root {
+  --text-color: #000;
+  --background-color: #fffcff;
+  --background-day: #fff;
+  --background-day-hover: #e8eafa;
+  --background-current-day: #e8f4fa;
+  --background-modal: #e8f4fa;
+}
+[data-theme="dark"] {
+  --text-color: #fff;
+  --background-color: #1e1c1e;
+  --background-day: #121212;
+  --background-day-hover: #282a36;
+  --background-current-day: #1d262b;
+  --background-modal: #1d262b;
+}
+
 html{
-    scroll-behavior: smooth;
-  }
+  scroll-behavior: smooth;
+}
 body {
   display: flex;
   margin-top: 50px;
   justify-content: center;
-  background-color: #FFFCFF;
+  background-color: var(--background-color);
+  color: var(--text-color);
 }
 button {
   width: 75px;
@@ -17,7 +53,6 @@ button {
   border-radius: 5px;
   color: white;
 }
-
 #header {
   padding: 10px;
   color: #d36c6c;
@@ -76,7 +111,7 @@ nav i{
   height: 100px;
   cursor: pointer;
   box-sizing: border-box;
-  background-color: white;
+  background-color: var(--background-day);
   margin: 5px;
   box-shadow: 0px 0px 3px #CBD4C2;
   display: flex;
@@ -84,11 +119,10 @@ nav i{
   justify-content: space-between;
 }
 .day:hover {
-  background-color: #e8eafa;
+  background-color: var(--background-day-hover);
 }
-
 .day + #currentDay {
-  background-color:#e8f4fa;
+  background-color: var(--background-current-day);
 }
 .event {
   font-size: 10px;
@@ -101,14 +135,14 @@ nav i{
 }
 .padding {
   cursor: default !important;
-  background-color: #FFFCFF !important;
+  background-color: var(--background-color) !important;
   box-shadow: none !important;
 }
 #newEventModal, #deleteEventModal {
   display: none;
   z-index: 20;
   padding: 25px;
-  background-color: #e8f4fa;
+  background-color: var(--background-modal);
   box-shadow: 0px 0px 3px black;
   border-radius: 5px;
   width: 350px;
@@ -149,3 +183,8 @@ nav i{
   position: absolute;
   background-color: rgba(0,0,0,0.8);
 }
+.theme-switch { display: inline-block; height: 34px; position: relative; width: 60px; }
+.theme-switch input { display:none; }
+.darkmode { display: none !important; }
+input:checked + .icons .lightmode { display: none !important; }
+input:checked + .icons .darkmode { display: var(--fa-display,inline-block) !important; }
