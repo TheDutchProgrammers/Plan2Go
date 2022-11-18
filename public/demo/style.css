@@ -15,7 +15,6 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-
 :root {
   --text-color: #000;
   --background-color: #fffcff;
@@ -32,10 +31,7 @@
   --background-current-day: #1d262b;
   --background-modal: #1d262b;
 }
-
-html{
-  scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; }
 body {
   display: flex;
   margin-top: 50px;
@@ -61,11 +57,11 @@ button {
   display: flex;
   justify-content: space-between;
 }
-.logo{
+.logo {
   width: 200px;
   align-content: left;
 }
-nav i{
+nav i {
   text-decoration: none;
   font-size: 30px;
   margin-right: 15px;
@@ -73,7 +69,7 @@ nav i{
   display: inline-block;
   height: 500%;
 }
-.copyright{
+.copyright {
   width: 100%;
   text-align: center;
   padding: 25px 0;
@@ -81,15 +77,9 @@ nav i{
   font-weight: 300;
   margin-top: 20px;
 }
-.copyright i{
-  color: #ff004f;
-}
-#header button {
-  background-color:#92a1d1;
-}
-#container {
-  width: 770px;
-}
+.copyright i { color: #ff004f; }
+#header button { background-color:#92a1d1; }
+#container { width: 770px; }
 #weekdays {
   width: 100%;
   display: flex;
@@ -118,12 +108,8 @@ nav i{
   flex-direction: column;
   justify-content: space-between;
 }
-.day:hover {
-  background-color: var(--background-day-hover);
-}
-.day + #currentDay {
-  background-color: var(--background-current-day);
-}
+.day:hover { background-color: var(--background-day-hover); }
+.day + #currentDay { background-color: var(--background-current-day); }
 .event {
   font-size: 10px;
   padding: 3px;
@@ -164,15 +150,9 @@ nav i{
 #eventTitleInput.error {
   border: 2px solid red;
 }
-#cancelButton, #deleteButton {
-  background-color: #d36c6c;
-}
-#saveButton, #closeButton {
-  background-color: #92a1d1;
-}
-#eventText {
-  font-size: 14px;
-}
+#cancelButton, #deleteButton { background-color: #d36c6c; }
+#saveButton, #closeButton { background-color: #92a1d1; }
+#eventText { font-size: 14px; }
 #modalBackDrop {
   display: none;
   top: 0px;
@@ -183,8 +163,4 @@ nav i{
   position: absolute;
   background-color: rgba(0,0,0,0.8);
 }
-.theme-switch { display: inline-block; height: 34px; position: relative; width: 60px; }
-.theme-switch input { display:none; }
-.darkmode { display: none !important; }
-input:checked + .icons .lightmode { display: none !important; }
-input:checked + .icons .darkmode { display: var(--fa-display,inline-block) !important; }
+.theme-switch { display: inline-block; height: 34px; position: relative; width: 60px; } .theme-switch input { display:none; } [data-theme="hacker"] { /* Please just try to find out how to get it without cheating! */ --text-color: #fff; --background-color: #005c00; --background-day: #142f14; --background-day-hover: #016b03; --background-current-day: #00a813; --background-modal: #4caf50; } .darkmode { display: none !important; } input:checked + .icons .lightmode { display: none !important; } input:checked + .icons .darkmode { display: var(--fa-display,inline-block) !important; }
