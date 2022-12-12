@@ -152,7 +152,9 @@ function initButtons() {
 }
 
 function initDarkmode() {
-	const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]'), currentTheme = localStorage.getItem('theme');
+	const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]')
+	const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
+	const currentTheme = localStorage.getItem('theme') || ((prefersDarkScheme.matches) ? 'dark' : 'light');
 	if (currentTheme) {
 		document.documentElement.setAttribute('data-theme', currentTheme);
 		if (currentTheme === 'dark') toggleSwitch.checked = true;
