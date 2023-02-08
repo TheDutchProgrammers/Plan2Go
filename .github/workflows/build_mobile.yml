@@ -43,13 +43,14 @@ jobs:
         local-cache: true
     - name: Debug
       run: |
+        yarn add vite
         yarn
         ls 
         echo foo
         ls node_modules
-    - name: Debug again
-      run: | 
-        DEBUG="vite-tsconfig-paths" node_modules/.bin/vite dev
+    #- name: Debug again
+    #  run: | 
+    #    DEBUG="vite-tsconfig-paths" node_modules/.bin/vite dev
     - name: install app dependencies 
       run:  yarn && yarn build
     - name: Init Android Studio Project
@@ -76,9 +77,8 @@ jobs:
         node-version: 16
     - name: Build tauri next branch
       run: |
-        git clone https://github.com/tauri-apps/tauri
-        cd tauri && git checkout next
-        cd tooling/cli/node
+        git clone -b next https://github.com/tauri-apps/tauri
+        cd tauri/tooling/cli/node
         yarn
         yarn build
     - name: install app dependencies and build it
