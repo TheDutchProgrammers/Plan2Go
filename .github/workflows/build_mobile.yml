@@ -26,13 +26,17 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: '11' 
-    - name: Clone Tauri next branch
+    - name: Clone tauri next branch
       run: |
         git clone -b next https://github.com/tauri-apps/tauri
     - name: Build tauri next branch
       run: |
         cd tauri/tooling/cli
         cargo build
+    - name: Cache tauri next branch
+      uses: Swatinem/rust-cache@v2
+      with:
+          workspaces: "tauri/tooling/cli/"
     - name: Setup NDK 
       uses: nttld/setup-ndk@v1
       id: setup-ndk
@@ -51,6 +55,8 @@ jobs:
     #    DEBUG="vite-tsconfig-paths" node_modules/.bin/vite dev
     - name: install app dependencies 
       run:  yarn && yarn build
+    - name: Cache build
+      uses: Swatinem/rust-cache@v2
     - name: Init Android Studio Project
       run: tauri/tooling/cli/target/debug/cargo-tauri android init
       env:
