@@ -1,9 +1,12 @@
-name: Release
+name: Build and Release
 on:
   push:
     tags:
       - 'v*'
   workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
 
 jobs:
   release:
