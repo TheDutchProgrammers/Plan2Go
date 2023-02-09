@@ -45,18 +45,8 @@ jobs:
         local-cache: true
     - name: Rust target
       run: rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android
-    - name: Debug
-      run: |
-        yarn add vite
-        yarn
-        ls 
-        echo foo
-        ls node_modules
-    #- name: Debug again
-    #  run: | 
-    #    DEBUG="vite-tsconfig-paths" node_modules/.bin/vite dev
     - name: install app dependencies 
-      run:  yarn && yarn build
+      run:  yarn
     - name: Cache build
       uses: Swatinem/rust-cache@v2
     - name: Init Android Studio Project
@@ -90,7 +80,7 @@ jobs:
     - name: Rust target
       run: rustup target add aarch64-apple-ios x86_64-apple-ios aarch64-apple-ios-sim
     - name: install app dependencies and build it
-      run: yarn && yarn build
+      run: yarn # && yarn build
     - name: Init Xcode Project
       run: yarn tauri ios init
     - name: Build IOS app
