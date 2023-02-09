@@ -43,6 +43,8 @@ jobs:
       with:
         ndk-version: r25b
         local-cache: true
+    - name: Rust target
+      run: rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android
     - name: Debug
       run: |
         yarn add vite
@@ -85,6 +87,8 @@ jobs:
         cd tauri/tooling/cli/node
         yarn
         yarn build
+    - name: Rust target
+      run: rustup target add aarch64-apple-ios x86_64-apple-ios aarch64-apple-ios-sim
     - name: install app dependencies and build it
       run: yarn && yarn build
     - name: Init Xcode Project
