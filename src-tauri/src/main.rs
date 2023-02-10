@@ -6,7 +6,6 @@
 #[cfg(desktop)]
 use tauri::{SystemTray, SystemTrayMenu, SystemTrayMenuItem, SystemTrayEvent, CustomMenuItem, Manager, api::dialog::ask, RunEvent, WindowEvent};
 
-#[cfg(desktop)]
 fn main() {
   let builder = tauri::Builder::default();
   //builder = app::AppBuilder::new();

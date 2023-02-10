@@ -29,14 +29,14 @@ jobs:
     - name: Clone tauri next branch
       run: |
         git clone -b next https://github.com/tauri-apps/tauri
-    - name: Build tauri next branch
-      run: |
-        cd tauri/tooling/cli
-        cargo build
     - name: Cache tauri next branch
       uses: Swatinem/rust-cache@v2
       with:
           workspaces: "tauri/tooling/cli/"
+    - name: Build tauri next branch
+      run: |
+        cd tauri/tooling/cli
+        cargo build
     - name: Setup NDK 
       uses: nttld/setup-ndk@v1
       id: setup-ndk
