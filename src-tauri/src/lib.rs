@@ -25,7 +25,6 @@ impl AppBuilder {
     self.setup.replace(Box::new(setup));
     self
   }
-
   pub fn run(self) {
     let setup = self.setup;
     tauri::Builder::default()

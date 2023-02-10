@@ -43,12 +43,14 @@ jobs:
       with:
         ndk-version: r25b
         local-cache: true
+    - name: Rust cache
+      uses: swatinem/rust-cache@v2
+      with:
+        workspaces: './src-tauri -> target'
     - name: Rust target
       run: rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android
     - name: install app dependencies 
       run:  yarn
-    - name: Cache build
-      uses: Swatinem/rust-cache@v2
     - name: Init Android Studio Project
       run: tauri/tooling/cli/target/debug/cargo-tauri android init
       env:
