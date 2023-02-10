@@ -63,7 +63,7 @@ jobs:
       with:
         name: apks
         path: |
-          src-tauri/gen/android/*/app/build/outputs/apk/**/**/*.apk
+          src-tauri/gen/android/app/app/build/outputs/apk/**/**/*.apk
           
   IOS:
     runs-on: macos-12
@@ -73,18 +73,31 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: 16
-    - name: Build tauri next branch
+    - name: Clone tauri next branch
       run: |
         git clone -b next https://github.com/tauri-apps/tauri
-        cd tauri/tooling/cli/node
-        yarn
-        yarn build
+    - name: Cache tauri next branch
+      uses: Swatinem/rust-cache@v2
+      with:
+          workspaces: "tauri/tooling/cli/"
+    - name: Build tauri next branch
+      run: |
+        #cd tauri/tooling/cli/node
+        #yarn && yarn build
+        cd tauri/tooling/cli
+        cargo build
     - name: Rust target
       run: rustup target add aarch64-apple-ios x86_64-apple-ios aarch64-apple-ios-sim
+    - name: Rust cache
+      uses: swatinem/rust-cache@v2
+      with:
+        workspaces: './src-tauri -> target'
     - name: install app dependencies and build it
       run: yarn # && yarn build
     - name: Init Xcode Project
-      run: yarn tauri ios init
+      #run: yarn tauri ios init
+      run: tauri/tooling/cli/target/debug/cargo-tauri ios init
     - name: Build IOS app
-      run: yarn tauri ios build
+      #run: yarn tauri ios build
+      run: tauri/tooling/cli/target/debug/cargo-tauri ios build
 
