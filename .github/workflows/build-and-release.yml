@@ -15,10 +15,13 @@ jobs:
       fail-fast: false
       matrix:
         platform: [macos-latest, ubuntu-latest, windows-latest]
+        default: yes
         include:
           - platform: ubuntu-latest
-            android: true
+            default: no
+            android: yes
         #  - platform: macos-latest # disabled ios for now, cause it doesn't work (No code signing certificates found)
+        #    default: no
         #    ios: true
     runs-on: ${{ matrix.platform }}
     steps:
@@ -40,7 +43,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
-          cache: 'yarn'
 
       - name: Setup java
         uses: actions/setup-java@v3

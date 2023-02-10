@@ -2,9 +2,9 @@ name: Build Mobile
 
 on:
   push:
-    branches: [ "test" ]
+    branches: [ "test_DISABLED" ]
   pull_request:
-    branches: [ "test" ]
+    branches: [ "test_DISABLED" ]
 
 env:
   CARGO_TERM_COLOR: always
