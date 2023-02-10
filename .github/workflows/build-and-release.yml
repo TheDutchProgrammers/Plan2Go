@@ -15,14 +15,14 @@ jobs:
       fail-fast: false
       matrix:
         platform: [macos-latest, ubuntu-latest, windows-latest]
-        default: "yes"
+        default: [true]
         include:
           - platform: ubuntu-latest
-            default: "no"
-            android: "yes"
+            default: false
+            android: yes
         #  - platform: macos-latest # disabled ios for now, cause it doesn't work (No code signing certificates found)
-        #    default: "no"
-        #    ios: "yes"
+        #    default: no
+        #    ios: yes
     runs-on: ${{ matrix.platform }}
     steps:
       - name: Checkout repository
