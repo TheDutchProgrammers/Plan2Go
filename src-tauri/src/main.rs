@@ -6,17 +6,15 @@
 #[cfg(desktop)]
 use tauri::{SystemTray, SystemTrayMenu, SystemTrayMenuItem, SystemTrayEvent, CustomMenuItem, Manager, api::dialog::ask, RunEvent, WindowEvent};
 
+#[cfg(desktop)]
 fn main() {
-  let builder = tauri::Builder::default();
-  //builder = app::AppBuilder::new();
-  if cfg!(desktop) {
-    let hide = CustomMenuItem::new("togglehideshow".to_string(), "Hide");
-    let quit = CustomMenuItem::new("quit".to_string(), "Quit");
-    let tray_menu = SystemTrayMenu::new()
-      .add_item(hide)
-      .add_native_item(SystemTrayMenuItem::Separator)
-      .add_item(quit);
-    builder
+  let hide = CustomMenuItem::new("togglehideshow".to_string(), "Hide");
+  let quit = CustomMenuItem::new("quit".to_string(), "Quit");
+  let tray_menu = SystemTrayMenu::new()
+    .add_item(hide)
+    .add_native_item(SystemTrayMenuItem::Separator)
+    .add_item(quit);
+  tauri::Builder::default()
       .system_tray(SystemTray::new().with_menu(tray_menu))
       .on_system_tray_event(|app, event| match event {
         SystemTrayEvent::LeftClick {
@@ -111,9 +109,10 @@ fn main() {
         }
         _ => {}
       }); // End of '.run(..., {'
-  } else {
-    builder
-      .run(tauri::generate_context!())
-      .expect("error while running tauri application");
-  }
 }
+
+#[cfg(mobile)]
+fn main() {
+  app::AppBuilder::new().run();
+}
+
