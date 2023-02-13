@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "@tauri-apps/cli": "^1.2.3",
+    "@tauri-apps/cli": "^2.0.0-alpha.2",
     "internal-ip": "^7.0.0"
   },
   "name": "plan2go_desktop",
@@ -22,5 +22,8 @@
     "yh4f"
   ],
   "author": "Miniontoby",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@tauri-apps/api": "^2.0.0-alpha.0"
+  }
 }

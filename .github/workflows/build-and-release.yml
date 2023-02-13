@@ -92,10 +92,6 @@ jobs:
       - name: Install app dependencies
         run: yarn
 
-      - name: Build web
-        if: ${{ !matrix.android && !matrix.ios }}
-        run: yarn build
-
       - name: Init Android Studio Project
         if: ${{ matrix.android }}
         run: tauri/tooling/cli/target/debug/cargo-tauri android init
