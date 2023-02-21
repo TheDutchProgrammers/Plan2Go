@@ -62,7 +62,8 @@ jobs:
       - name: Clone tauri next branch
         if: ${{ matrix.android || matrix.ios }}
         run: |
-          git clone -b next https://github.com/tauri-apps/tauri
+          echo "Skipping"
+          #git clone -b next https://github.com/tauri-apps/tauri
 
       - name: Cache tauri next branch
         uses: Swatinem/rust-cache@v2
@@ -74,7 +75,8 @@ jobs:
         if: ${{ matrix.android || matrix.ios }}
         run: |
           cd tauri/tooling/cli
-          cargo build
+          echo "Skipping"
+          #cargo build
 
       - name: Rust cache
         uses: swatinem/rust-cache@v2
@@ -104,7 +106,7 @@ jobs:
 
       - name: Build apk
         if: ${{ matrix.android }}
-        run: yarn tauri android build --split-per-abi --debug
+        run: yarn tauri android build --split-per-abi --debug --verbose
         env:
           NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
 
