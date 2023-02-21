@@ -94,7 +94,7 @@ jobs:
 
       - name: Init Android Studio Project
         if: ${{ matrix.android }}
-        run: tauri android init
+        run: yarn tauri android init
         env:
           NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
 
@@ -104,7 +104,7 @@ jobs:
 
       - name: Build apk
         if: ${{ matrix.android }}
-        run: tauri android build --split-per-abi --debug
+        run: yarn tauri android build --split-per-abi --debug
         env:
           NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
 
