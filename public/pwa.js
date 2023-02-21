@@ -3,10 +3,21 @@ window.addEventListener("load", () => {
 		navigator.serviceWorker.register("service-worker.js");
 		navigator.serviceWorker.addEventListener('message', event => console.log(event.data));
 	}
+	if ("__TAURI__" in window) {
+		Notification.showNotification = (title, option={}) => {
+			if (typeof(title) == 'object') option = title;
+			if (!("title" in option)) option.title = title;
+			new Notification(option.title, option);
+		}
+		class TimestampTrigger{
+			constructor(timestamp) {}
+		}
+	}
 });
 
 document.querySelector('#notification-button').onclick = async () => {
-	const reg = await navigator.serviceWorker.getRegistration();
+	let reg = await navigator.serviceWorker.getRegistration();
+	if ("__TAURI__" in window) reg = Notification;
 	Notification.requestPermission().then(permission => {
 		if (permission !== 'granted') {
 			alert('you need to allow push notifications');
@@ -39,11 +50,13 @@ document.querySelector('#notification-button').onclick = async () => {
 	});
 };
 document.querySelector('#notification-cancel').onclick = async () => {
-	const reg = await navigator.serviceWorker.getRegistration();
-	const notifications = await reg.getNotifications({
-		includeTriggered: true
-	});
-	notifications.forEach(notification => notification.close());
-	alert(`${notifications.length} notification(s) cancelled`);
+	if (!("__TAURI__" in window)) {
+		const reg = await navigator.serviceWorker.getRegistration();
+		const notifications = await reg.getNotifications({
+			includeTriggered: true
+		});
+		notifications.forEach(notification => notification.close());
+		alert(`${notifications.length} notification(s) cancelled`);
+	}
 };
 
