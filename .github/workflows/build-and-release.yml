@@ -74,7 +74,7 @@ jobs:
       - name: Build tauri next branch
         if: ${{ matrix.android || matrix.ios }}
         run: |
-          cd tauri/tooling/cli
+          #cd tauri/tooling/cli
           echo "Skipping"
           #cargo build
 
