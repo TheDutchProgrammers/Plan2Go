@@ -25,7 +25,7 @@ const newEventModal = document.getElementById('newEventModal');
 const deleteEventModal = document.getElementById('deleteEventModal');
 const backDrop = document.getElementById('modalBackDrop');
 const eventTitleInput = document.getElementById('eventTitleInput');
-const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 function openModal(date) {
   clicked = date;
