@@ -106,7 +106,7 @@ jobs:
 
       - name: Build apk
         if: ${{ matrix.android }}
-        run: yarn tauri android build --split-per-abi --debug --verbose
+        run: cargo install tauri-cli --version "^2.0.0-alpha" && cargo tauri android build --split-per-abi --debug --verbose
         env:
           NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
 
