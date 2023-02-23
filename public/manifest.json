@@ -3,42 +3,42 @@
   "name": "Plan2Go: What do I have in my planning?",
   "icons": [
     {
-      "src": "/plan2go/images/icon.png",
+      "src": "/images/icon.png",
       "type": "image/png",
       "sizes": "115x115",
       "purpose": "any maskable"
     },
     {
-      "src": "/plan2go/images/Plan2Go.png",
+      "src": "/images/Plan2Go.png",
       "type": "image/png",
       "sizes": "692x450"
     },
     {
-      "src": "/plan2go/images/Plan2GoBanner.png",
+      "src": "/images/Plan2GoBanner.png",
       "type": "image/png",
       "sizes": "512x512"
     }
   ],
-  "id": "/plan2go/?source=pwa",
-  "start_url": "/plan2go/demo/?source=pwa",
+  "id": "/?source=pwa",
+  "start_url": "/demo/?source=pwa",
   "background_color": "#264a8a",
   "display": "standalone",
-  "scope": "/plan2go/",
+  "scope": "/",
   "theme_color": "#264a8a",
   "shortcuts": [
     {
       "name": "How's weather today?",
       "short_name": "Today",
       "description": "View weather information for today",
-      "url": "/plan2go/demo/today?source=pwa",
-      "icons": [{ "src": "/plan2go/images/today.png", "sizes": "192x192" }]
+      "url": "/demo/today?source=pwa",
+      "icons": [{ "src": "/images/today.png", "sizes": "192x192" }]
     },
     {
       "name": "How's weather tomorrow?",
       "short_name": "Tomorrow",
       "description": "View weather information for tomorrow",
-      "url": "/plan2go/demo/tomorrow?source=pwa",
-      "icons": [{ "src": "/plan2go/images/tomorrow.png", "sizes": "192x192" }]
+      "url": "/demo/tomorrow?source=pwa",
+      "icons": [{ "src": "/images/tomorrow.png", "sizes": "192x192" }]
     }
   ],
   "description": "Plan2Go PWA"
