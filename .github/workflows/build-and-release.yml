@@ -1,9 +1,13 @@
-name: Release
+name: Build and Release
 on:
   push:
     tags:
       - 'v*'
+    branches: [ "DesktopApp" ]
   workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
 
 jobs:
   release:
@@ -11,37 +15,94 @@ jobs:
       fail-fast: false
       matrix:
         platform: [macos-latest, ubuntu-latest, windows-latest]
+        default: [true]
+        include:
+          - platform: ubuntu-latest
+            default: false
+            android: yes
+        #  - platform: macos-latest # disabled ios for now, cause it doesn't work (No code signing certificates found)
+        #    default: no
+        #    ios: yes
     runs-on: ${{ matrix.platform }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Node.js setup
-        uses: actions/setup-node@v1
-        with:
-          node-version: 16
-
-      - name: Rust setup
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
+        uses: actions/checkout@v3
 
       - name: Install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgtk-3-dev webkit2gtk-4.0 libappindicator3-dev librsvg2-dev patchelf
-      - name: Install app dependencies
-        run: yarn
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+
+      - name: Rust setup
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Sync node version and setup cache
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Setup java
+        uses: actions/setup-java@v3
+        if: ${{ matrix.android }}
+        with:
+          distribution: 'temurin'
+          java-version: '11' 
+
+      - name: Setup NDK 
+        uses: nttld/setup-ndk@v1
+        if: ${{ matrix.android }}
+        id: setup-ndk
+        with:
+          ndk-version: r25b
+          local-cache: true
 
       - name: Rust cache
         uses: swatinem/rust-cache@v2
         with:
-          workspaces: src-tauri
+          workspaces: './src-tauri -> target'
+
+      - name: Android Rust target
+        if: ${{ matrix.android }}
+        run: rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android
+
+      - name: ios Rust target
+        if: ${{ matrix.ios }}
+        run: rustup target add aarch64-apple-ios x86_64-apple-ios aarch64-apple-ios-sim
+
+      - name: Install app dependencies
+        run: yarn
+
+      - name: Init Android Studio Project
+        if: ${{ matrix.android }}
+        run: yarn tauri android init
+        env:
+          NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+
+      - name: Init Xcode Project
+        if: ${{ matrix.ios }}
+        run: yarn tauri ios init
+
+      - name: Build apk
+        if: ${{ matrix.android }}
+        run: cargo install tauri-cli --version "^2.0.0-alpha" && cargo tauri android build --split-per-abi
+        env:
+          NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+
+      - name: Build IOS app
+        if: ${{ matrix.ios }}
+        run: cargo install tauri-cli --version "^2.0.0-alpha" && cargo tauri ios build
+
+      - uses: actions/upload-artifact@v3
+        if: ${{ matrix.android }}
+        with:
+          name: apks
+          path: |
+            src-tauri/gen/android/app/app/build/outputs/apk/**/**/*.apk
 
       - name: Build the app
         uses: tauri-apps/tauri-action@dev
-
+        if: ${{ !matrix.android && !matrix.ios }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -50,3 +111,5 @@ jobs:
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: true
           prerelease: false
+          #tauriScript: ${{ (matrix.android || matrix.ios) ? "tauri/tooling/cli/target/debug/cargo-tauri" : "yarn|npx tauri"}}
+          #args: ${{ (matrix.android) ? '--split-per-abi --debug' }}

@@ -1,6 +1,7 @@
 {
   "devDependencies": {
-    "@tauri-apps/cli": "^1.2.0"
+    "@tauri-apps/cli": "^2.0.0-alpha.2",
+    "internal-ip": "^7.0.0"
   },
   "name": "plan2go_desktop",
   "description": "Plan2Go is an open source calender software made for the YH4F 2023.",
@@ -21,5 +22,8 @@
     "yh4f"
   ],
   "author": "Miniontoby",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@tauri-apps/api": "^2.0.0-alpha.0"
+  }
 }

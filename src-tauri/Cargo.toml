@@ -1,10 +1,10 @@
 [package]
 name = "app"
 version = "0.1.0"
-description = "A Tauri App"
-authors = ["you"]
+description = "Plan2Go is an open source calender software made for the YH4F 2023."
+authors = ["Miniontoby"]
 license = ""
-repository = ""
+repository = "https://edugit.org/thedutchprogrammers/plan2go"
 default-run = "app"
 edition = "2021"
 rust-version = "1.59"
@@ -12,12 +12,18 @@ rust-version = "1.59"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-tauri-build = { version = "1.2.0", features = [] }
+tauri-build = { version = "2.0.0-alpha.1", features = [] }
 
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.2.0", features = [] }
+tauri = { version = "2.0.0-alpha.3", features = ["notification-all", "system-tray"] }
+
+[target.'cfg(any(target_os = "windows", target_os = "macos"))'.dependencies]
+notify-rust = "4"
+
+[target.'cfg(any(target_os = "linux", target_os = "mobile"))'.dependencies]
+notify-rust = { version = "4", default-features = false }
 
 [features]
 # by default Tauri runs in production mode
@@ -26,3 +32,7 @@ default = [ "custom-protocol" ]
 # this feature is used for production builds where `devPath` points to the filesystem
 # DO NOT remove this
 custom-protocol = [ "tauri/custom-protocol" ]
+
+[lib]
+crate-type = ["staticlib", "cdylib", "rlib"]
+#path = "lib"
