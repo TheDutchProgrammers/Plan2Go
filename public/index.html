@@ -4,9 +4,45 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <!--<meta http-equiv="refresh" content="2;url=demo/" />-->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#264a8a"/>
+    <meta name="apple-touch-icon" content="/images/icon.png">
   </head>
   <body>
     <h1>Welcome from Tauri!</h1>
     <a href="demo/">Go to demo</a>
   </body>
+<script>
+async function notificationTest() {
+	if (!("Notification" in window)) {
+		if (!("__TAURI__" in window)) {
+			alert("This browser does not support desktop notification");
+			return false;
+		} else {
+			Notification = window.__TAURI__.notification;
+		}
+	} else {
+		Notification.isPermissionGranted = async () => Notification.permission === "granted";
+		Notification.sendNotification = (option) => {
+			if (typeof(option) == 'object') new Notification(option.title, option);
+			else new Notification(option);
+		}
+	}
+	const { isPermissionGranted, requestPermission, sendNotification } = Notification;
+	let permissionGranted = await isPermissionGranted();
+	if (!permissionGranted) {
+		const permission = await requestPermission();
+		permissionGranted = permission === 'granted';
+	}
+	if (permissionGranted) {
+		sendNotification('Tauri is awesome!');
+		sendNotification({ title: 'TAURI', body: 'Tauri is awesome!' });
+	}
+}
+// notificationTest();
+</script>
+<button id="notification-button">Notify</button>
+<button id="notification-cancel">Cancel</button>
+<script src="pwa.js"></script>
 </html>
