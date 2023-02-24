@@ -145,10 +145,18 @@ function initButtons() {
     load();
   });
 
+  document.getElementById('todayButton').addEventListener('click', () => {
+    nav = 0;
+    load();
+  });
+
   document.getElementById('saveButton').addEventListener('click', saveEvent);
   document.getElementById('cancelButton').addEventListener('click', closeModal);
   document.getElementById('deleteButton').addEventListener('click', deleteEvent);
   document.getElementById('closeButton').addEventListener('click', closeModal);
+
+  document.getElementById('modalBackDrop').addEventListener("click",closeModal);
+  document.addEventListener('keyup', (e) => {if (("key" in e && e.key === "Escape") || (e.keyCode == 27)) closeModal();});
 }
 
 function initDarkmode() {

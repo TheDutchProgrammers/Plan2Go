@@ -125,7 +125,7 @@ nav i {
   box-shadow: none !important;
 }
 #monthDisplay { width: 200px; }
-#newEventModal, #deleteEventModal {
+#newEventModal, #deleteEventModal, .modal {
   display: none;
   z-index: 20;
   padding: 25px;
@@ -164,4 +164,6 @@ nav i {
   position: fixed;
   background-color: rgba(0,0,0,0.8);
 }
+.event2 { background-color: green; padding: 10px; border-radius: 10px; }
+
 .theme-switch { display: inline-block; height: 26px; position: relative; width: 26px; } .theme-switch input { display:none; } [data-theme="hacker"] { /* Please just try to find out how to get it without cheating! */ --text-color: #fff; --background-color: #005c00; --background-day: #142f14; --background-day-hover: #016b03; --background-current-day: #00a813; --background-modal: #4caf50; } .darkmode { display: none !important; } input:checked + .icons .lightmode { display: none !important; } input:checked + .icons .darkmode { display: var(--fa-display,inline-block) !important; }
