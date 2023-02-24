@@ -99,7 +99,7 @@ self.addEventListener('notificationclick', event => {
         clients[0].focus();
         clients[0].postMessage('Push notification clicked!');
       } else {
-        self.clients.openWindow('/');
+        self.clients.openWindow('/plan2go/');
       }
     }));
   }

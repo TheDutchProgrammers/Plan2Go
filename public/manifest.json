@@ -27,17 +27,17 @@
   "theme_color": "#264a8a",
   "shortcuts": [
     {
-      "name": "How's weather today?",
+      "name": "What's on my planning today?",
       "short_name": "Today",
-      "description": "View weather information for today",
-      "url": "/plan2go/demo/today?source=pwa",
+      "description": "View planning for today",
+      "url": "/plan2go/demo/anyday.html?today&source=pwa",
       "icons": [{ "src": "/plan2go/images/today.png", "sizes": "192x192" }]
     },
     {
-      "name": "How's weather tomorrow?",
+      "name": "What's on my planning tomorrow?",
       "short_name": "Tomorrow",
-      "description": "View weather information for tomorrow",
-      "url": "/plan2go/demo/tomorrow?source=pwa",
+      "description": "View planning for tomorrow",
+      "url": "/plan2go/demo/anyday.html?tomorrow&source=pwa",
       "icons": [{ "src": "/plan2go/images/tomorrow.png", "sizes": "192x192" }]
     }
   ],

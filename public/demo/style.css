@@ -84,6 +84,7 @@ nav i {
   width: 100%;
   display: flex;
   color: #247BA0;
+  text-align: center;
 }
 #weekdays div {
   width: 100px;
@@ -109,7 +110,7 @@ nav i {
   justify-content: space-between;
 }
 .day:hover { background-color: var(--background-day-hover); }
-.day + #currentDay { background-color: var(--background-current-day); }
+.day + #currentDay, .day#currentDay { background-color: var(--background-current-day); }
 .event {
   font-size: 10px;
   padding: 3px;
@@ -124,7 +125,8 @@ nav i {
   background-color: var(--background-color) !important;
   box-shadow: none !important;
 }
-#monthDisplay { width: 200px; }
+#monthDisplay, #setting { width: 200px; }
+#setting {direction: rtl;}
 #newEventModal, #deleteEventModal, .modal {
   display: none;
   z-index: 20;
@@ -135,7 +137,7 @@ nav i {
   width: 350px;
   top: 100px;
   left: calc(50% - 175px);
-  position: absolute;
+  position: fixed;
   font-family: sans-serif;
 }
 #eventTitleInput {

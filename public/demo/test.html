@@ -9,7 +9,7 @@
     <link rel="manifest" href="../manifest.json">
     <meta name="theme-color" content="#264a8a"/>
     <meta name="apple-touch-icon" content="../images/icon.png">
-<script src="https://unpkg.com/ical.js"></script>
+    <script src="https://unpkg.com/ical.js"></script>
   </head>
   <body>
     <!--
@@ -52,17 +52,18 @@
         </div>
       </div>
 
-      <div id="weekdays">
-        <div>Monday</div>
-        <div>Tuesday</div>
-        <div>Wednesday</div>
-        <div>Thursday</div>
-        <div>Friday</div>
-        <div>Saturday</div>
-        <div>Sunday</div>
-      </div>
-
-      <div id="calendar"></div>
+      <table id="tableing">
+        <tr id="weekdays">
+          <td>Monday</td>
+          <td>Tuesday</td>
+          <td>Wednesday</td>
+          <td>Thursday</td>
+          <td>Friday</td>
+          <td>Saturday</td>
+          <td>Sunday</td>
+        </tr>
+        <tr id="calendar"><noscript>You need JavaScript to use our Calendar</noscript></tr>
+      </table>
     </div>
 
     <script src="./test.js"></script>
