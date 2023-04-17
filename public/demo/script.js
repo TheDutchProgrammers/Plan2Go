@@ -33,19 +33,25 @@ class Modal {
 		let { id, title, body, extrabutton, closebutton, opener } = opts;
 		if (extrabutton != '') body += `<button id="${extrabutton.toLowerCase()}Button">${extrabutton}</button>`
 		let modalText = `<div id="${id}Modal" class="modal"><h2>${title}</h2>${body}<button id="${closebutton.toLowerCase()}Button">${closebutton}</button></div>`;
-		document.body.insertAdjacentHTML('beforeEnd', modalText);
+		this.element = document.querySelector(`#${id}Modal`);
+		if (this.element) this.element.outerHTML = modalText;
+		else document.body.insertAdjacentHTML('beforeEnd', modalText);
 		this.element = document.querySelector(`#${id}Modal`);
 
 		if (opener) document.querySelector(opener).addEventListener('click', () => this.open());
 		this.element.querySelector(`#${closebutton.toLowerCase()}Button`)?.addEventListener('click', () => this.close());
+
+		this.opened = false;
 	}
 	open () {
 		this.element.style.display = 'block';
 		document.querySelector('#modalBackDrop').style.display = 'block';
+		this.opened = true;
 	}
 	close () {
 		this.element.style.display = 'none';
 		document.querySelector('#modalBackDrop').style.display = 'none';
+		this.opened = false;
 	}
 }
 
@@ -55,7 +61,9 @@ window.modals['settings'] = new Modal({ id: "settings", title: "Settings", body:
 document.body.insertAdjacentHTML('beforeEnd', '<div id="modalBackDrop"></div>');
 document.querySelector("#exportCalendar").addEventListener("click", () => ical_download());
 
-const eventTitleInput = document.getElementById('eventTitleInput');
+const uppercaseFirstChar = (string) => string[0].toLocaleUpperCase() + string.substring(1);
+
+let eventTitleInput = document.getElementById('eventTitleInput');
 
 function openModal(date) {
   clicked = date;
@@ -91,7 +99,7 @@ function load() {
   const paddingDays = weekdays.indexOf(dateString.split(', ')[0]);
 
   document.getElementById('monthDisplay').innerText = 
-    `${dt.toLocaleDateString('en-us', { month: 'long' })} ${year}`;
+    `${uppercaseFirstChar(dt.toLocaleDateString(undefined, { month: 'long' }))} ${year}`; // undefined = fallback to user language
 
   calendar.innerHTML = '';
 
@@ -126,14 +134,15 @@ function load() {
 }
 
 function closeModal() {
-  eventTitleInput?.classList?.remove('error');
+  let inputs = Array.from(document.querySelectorAll("input")).filter(e=>e.id!="checkbox");
+  inputs.forEach(e=>{ e.classList.remove('error'); e.value=''; });
   Object.keys(window.modals).forEach((k) => window.modals[k].close());
-  eventTitleInput.value = '';
   clicked = null;
   load();
 }
 
 function saveEvent() {
+  eventTitleInput = document.getElementById('eventTitleInput');
   if (eventTitleInput.value) {
     eventTitleInput.classList.remove('error');
 
@@ -176,12 +185,12 @@ function initButtons() {
     load();
   });
 
-  document.getElementById('saveButton').addEventListener('click', saveEvent);
-  document.getElementById('cancelButton').addEventListener('click', closeModal);
-  document.getElementById('deleteButton').addEventListener('click', deleteEvent);
-  document.getElementById('closeButton').addEventListener('click', closeModal);
+  document.querySelectorAll('#saveButton')  .forEach(e=>e.addEventListener('click', (e) => saveEvent(e)));
+  document.querySelectorAll('#cancelButton').forEach(e=>e.addEventListener('click', () => closeModal()));
+  document.getElementById('deleteButton').addEventListener('click', () => deleteEvent());
+  document.getElementById('closeButton').addEventListener('click', () => closeModal());
+  document.getElementById('modalBackDrop').addEventListener("click",() => closeModal());
 
-  document.getElementById('modalBackDrop').addEventListener("click",closeModal);
   document.addEventListener('keyup', (e) => {if (("key" in e && e.key === "Escape") || (e.keyCode == 27)) closeModal();});
 }
 
