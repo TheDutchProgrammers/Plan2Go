@@ -1,19 +1,32 @@
 window.addEventListener("load", () => {
 	if ("serviceWorker" in navigator) {
-		let root = location.pathname.replace(/\/demo\/.*/,'')
+		const a = location.pathname.split("/"); a.pop(); const root = (a.join('/') + '/').replace(/\/demo\/.*/,'/'); 
 
-		navigator.serviceWorker.register(root + "/service-worker.js");
+		navigator.serviceWorker.register(root + "service-worker.js");
 
 		navigator.serviceWorker.addEventListener('message', event => console.log(event.data));
 	}
 	if ("__TAURI__" in window) {
+		class TimestampTrigger{
+			constructor(timestamp) {this.timestamp = timestamp;}
+		}
+		window.TimestampTrigger = TimestampTrigger;
+		Notification.notifications = [];
 		Notification.showNotification = (title, option={}) => {
 			if (typeof(title) == 'object') option = title;
 			if (!("title" in option)) option.title = title;
-			new Notification(option.title, option);
+			if ("showTrigger" in option) Notification.notifications.push(setTimeout(() => new Notification(option.title, option), option.showTrigger.timestamp - new Date().getTime()));
+			else new Notification(option.title, option);
 		}
-		class TimestampTrigger{
-			constructor(timestamp) {}
+		Notification.getNotifications = (options={}) => {
+			return Notification.notifications.map((id, i) => {
+				return {
+					"close": () => {
+						clearTimeout(id);
+						Notification.notifications.pop(i);
+					}
+				}
+			});
 		}
 	}
 });
@@ -26,6 +39,7 @@ async function sendNotificationAfter(seconds=5, body='Hello World', timestamp=nu
 			alert('you need to allow push notifications');
 		} else {
 			if (!timestamp) timestamp = new Date().getTime() + seconds * 1000; // now plus 5000ms
+			const a = location.pathname.split("/"); a.pop(); const root = (a.join('/') + '/').replace(/\/demo\/.*/,'/'); 
 			reg.showNotification(
 				'Demo Push Notification',
 				{
@@ -35,8 +49,8 @@ async function sendNotificationAfter(seconds=5, body='Hello World', timestamp=nu
 					data: {
 						url: window.location.href, // pass the current url to the notification
 					},
-					badge: '/images/icon.png',
-					icon: '/images/icon.png',
+					badge: root + 'images/icon.png',
+					icon: root + 'images/icon.png',
 					actions: [
 						{
 							action: 'open',
@@ -53,15 +67,14 @@ async function sendNotificationAfter(seconds=5, body='Hello World', timestamp=nu
 	});
 }
 async function cancelNotifications() {
-	if (!("__TAURI__" in window)) {
-		const reg = await navigator.serviceWorker.getRegistration();
-		const notifications = await reg.getNotifications({
-			includeTriggered: true
-		});
-		notifications.forEach(notification => notification.close());
-		return `${notifications.length} notification(s) cancelled`;
-	}
+	let reg = await navigator.serviceWorker.getRegistration();
+	if ("__TAURI__" in window) reg = Notification;
+	const notifications = await reg.getNotifications({
+		includeTriggered: true
+	});
+	notifications.forEach(notification => notification.close());
+	return `${notifications.length} notification(s) cancelled`;
 }
 
 document.querySelector('#notification-button')?.addEventListener("click", () => sendNotificationAfter(5))
-document.querySelector('#notification-cancel')?.addEventListener("click", () => alert(cancelNotifications()))
+document.querySelector('#notification-cancel')?.addEventListener("click", async () => alert(await cancelNotifications()))

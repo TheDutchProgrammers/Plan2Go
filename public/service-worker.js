@@ -20,22 +20,48 @@ const OFFLINE_VERSION = 1;
 const CACHE_NAME = "offline";
 // Customize this with a different URL if needed.
 const OFFLINE_URL = "offline.html";
+const a = location.pathname.split("/"); a.pop();
+const root = (a.join('/') + '/').replace(/\/demo\/.*/,'/'); 
+
+const appFiles = ["", "index.html", "pwa.js", "manifest.json", "offline.html", "demo/", "demo/index.html", "demo/script.js", "demo/style.css", "demo/test.html", "demo/test.js", "images/icon.png", "images/Plan2Go.png", "images/Plan2GoBanner.png"]
+const contentToCache = [...appFiles.map((f)=>`${root}${f}`), "https://unpkg.com/ical.js", "https://kit.fontawesome.com/a0d8d27dcc.js"];
 
 self.addEventListener("install", (event) => {
+  console.log("[Service Worker] Install");
   event.waitUntil(
     (async () => {
       const cache = await caches.open(CACHE_NAME);
+
+      console.log("[Service Worker] Caching all app files");
+
       // Setting {cache: 'reload'} in the new request ensures that the
       // response isn't fulfilled from the HTTP cache; i.e., it will be
       // from the network.
-      await cache.add(new Request(OFFLINE_URL, { cache: "reload" }));
+      // await cache.add(new Request(OFFLINE_URL, { cache: "reload" }));
+
+      // await cache.addAll(contentToCache);
+      await cache.addAll(contentToCache.map((urlToPrefetch) => new Request(urlToPrefetch, { cache: "reload" })))
+
+      console.log("[Service Worker] Cached all app files!");
     })()
   );
+
   // Force the waiting service worker to become the active service worker.
   self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    caches.keys().then((keyList) => {
+      return Promise.all(
+        keyList.map((key) => {
+          if (key === CACHE_NAME) return;
+          return caches.delete(key);
+        })
+      );
+    })
+  );
+
   event.waitUntil(
     (async () => {
       // Enable navigation preload if it's supported.
@@ -56,27 +82,32 @@ self.addEventListener("fetch", (event) => {
   if (event.request.mode === "navigate") {
     event.respondWith(
       (async () => {
+        const cache = await caches.open(CACHE_NAME);
         try {
           // First, try to use the navigation preload response if it's
           // supported.
           const preloadResponse = await event.preloadResponse;
-          if (preloadResponse) {
-            return preloadResponse;
-          }
+          if (preloadResponse) return preloadResponse;
 
           // Always try the network first.
           const networkResponse = await fetch(event.request);
+          cache.put(event.request, networkResponse.clone());
           return networkResponse;
         } catch (error) {
           // catch is only triggered if an exception is thrown, which is
           // likely due to a network error.
           // If fetch() returns a valid HTTP response with a response code in
           // the 4xx or 5xx range, the catch() will NOT be called.
-          console.log("Fetch failed; returning offline page instead.", error);
+          console.log("[Service Worker] Fetch failed; returning cached page instead.", error);
 
-          const cache = await caches.open(CACHE_NAME);
-          const cachedResponse = await cache.match(OFFLINE_URL);
-          return cachedResponse;
+          let cacheUrl = event.request.url.replace(location.origin, '');
+          const cachedResponse = await caches.match(cacheUrl) ?? await cache.match(cacheUrl);
+          console.log(`[Service Worker] Fetching resource: ${cacheUrl}`);
+          if (cachedResponse) return cachedResponse;
+          else {
+            console.log("[Service Worker] Cannot find cached page; returning offline page instead.");
+            return await cache.match(OFFLINE_URL);
+          }
         }
       })()
     );
@@ -99,7 +130,7 @@ self.addEventListener('notificationclick', event => {
         clients[0].focus();
         clients[0].postMessage('Push notification clicked!');
       } else {
-        self.clients.openWindow('/plan2go/');
+        self.clients.openWindow(root);
       }
     }));
   }
