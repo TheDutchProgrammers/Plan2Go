@@ -7,15 +7,11 @@ window.addEventListener("load", () => {
 		navigator.serviceWorker.addEventListener('message', event => console.log(event.data));
 	}
 	if ("__TAURI__" in window) {
-		class TimestampTrigger{
-			constructor(timestamp) {this.timestamp = timestamp;}
-		}
-		window.TimestampTrigger = TimestampTrigger;
 		Notification.notifications = [];
 		Notification.showNotification = (title, option={}) => {
 			if (typeof(title) == 'object') option = title;
 			if (!("title" in option)) option.title = title;
-			if ("showTrigger" in option) Notification.notifications.push(setTimeout(() => new Notification(option.title, option), option.showTrigger.timestamp - new Date().getTime()));
+			if ("timestamp" in option) Notification.notifications.push(setTimeout(() => new Notification(option.title, option), option.timestamp - new Date().getTime()));
 			else new Notification(option.title, option);
 		}
 		Notification.getNotifications = (options={}) => {
@@ -45,7 +41,7 @@ async function sendNotificationAfter(seconds=5, body='Hello World', timestamp=nu
 				{
 					tag: timestamp, // a unique ID
 					body: body, // content of the push notification
-					showTrigger: new TimestampTrigger(timestamp), // set the time for the push notification
+					timestamp: Math.floor(timestamp), // set the time for the push notification
 					data: {
 						url: window.location.href, // pass the current url to the notification
 					},
