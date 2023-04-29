@@ -3,18 +3,18 @@
   "name": "Plan2Go: What do I have in my planning?",
   "icons": [
     {
-      "src": "/images/icon.png",
+      "src": "/plan2go/images/icon.png",
       "type": "image/png",
       "sizes": "115x115",
       "purpose": "any maskable"
     },
     {
-      "src": "/images/Plan2Go.png",
+      "src": "/plan2go/images/Plan2Go.png",
       "type": "image/png",
       "sizes": "693x450"
     },
     {
-      "src": "/images/Plan2GoBanner.png",
+      "src": "/plan2go/images/Plan2GoBanner.png",
       "type": "image/png",
       "sizes": "512x512"
     }
