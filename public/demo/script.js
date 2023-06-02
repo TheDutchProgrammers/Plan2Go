@@ -55,23 +55,39 @@ class Modal {
 	}
 }
 
-window.modals['newEvent'] = new Modal({ id: "newEvent", title: "New Event", body: '<input id="eventTitleInput" placeholder="Event Title" />', extrabutton: "Save", closebutton: "Cancel" });
+window.modals['newEvent'] = new Modal({ id: "newEvent", title: "New Event", body: '<input id="eventTitleInput" placeholder="Event Title" /><label for="eventStartInput">Event Start: </label><input id="eventStartInput" type="time" /><br><label for="eventEndInput">Event End: </label><input id="eventEndInput" type="time" /><br>', extrabutton: "Save", closebutton: "Cancel" });
 window.modals['deleteEvent'] = new Modal({ id: "deleteEvent", title: "Event", body: '<p id="eventText"></p>', extrabutton: "Delete" });
-window.modals['settings'] = new Modal({ id: "settings", title: "Settings", body: '<p>Needs to be done!</p><button id="exportCalendar">Export</button><br><br>', extrabutton: "Save", opener: "#setting > i" });
+window.modals['settings'] = new Modal({ id: "settings", title: "Settings", body: '<p>Needs to be done!</p><button id="exportCalendar">Export</button><button id="importCalendar">Import</button><br><br>', extrabutton: "Save", opener: "#setting > i" });
+window.modals['settings'].element.querySelector("#exportCalendar").addEventListener("click", () => ical_download());
+window.modals['settings'].element.querySelector("#importCalendar").addEventListener("click", () => start_ical_loader());
 document.body.insertAdjacentHTML('beforeEnd', '<div id="modalBackDrop"></div>');
-document.querySelector("#exportCalendar").addEventListener("click", () => ical_download());
-
 const uppercaseFirstChar = (string) => string[0].toLocaleUpperCase() + string.substring(1);
+
+function migrateData(){
+  if (!localStorage.getItem("events")) return;
+  let items = JSON.parse(localStorage.getItem("events"));
+  items.forEach(e => {
+    if (!e.startDate) {
+      const date = new Date(new Date(e.date).setHours(1));
+      e.startDate = date.toLocaleString('en-US');
+      e.endDate = new Date(date.setHours(24)).toLocaleString('en-US');
+    }
+  })
+  localStorage.setItem("events", JSON.stringify(items));
+  return items;
+}
+migrateData();
+
+/// @source https://stackoverflow.com/a/70679783
+const arrayContainsObject = (array, object) => array.some(item => Object.keys(item).every(key => item[key] === object[key]))
 
 let eventTitleInput = document.getElementById('eventTitleInput');
 
-function openModal(date) {
+function openModal(date, eventForDay = null) {
   clicked = date;
 
-  const eventForDay = events.find(e => e.date === clicked);
-
   if (eventForDay) {
-    document.getElementById('eventText').innerText = eventForDay.title;
+    document.getElementById('eventText').innerText = `Title: ${eventForDay.title}\nFrom: ${new Date(eventForDay.startDate).toLocaleString('en-US')}\nTo: ${new Date(eventForDay.endDate).toLocaleString('en-US')}`; // SHOULD STAY 'en-US' since else the delete parser doesn't work
     window.modals['deleteEvent'].open();
   } else {
     window.modals['newEvent'].open()
@@ -111,18 +127,16 @@ function load() {
 
     if (i > paddingDays) {
       daySquare.innerText = i - paddingDays;
-      const eventForDay = events.find(e => e.date === dayString);
+      if (i - paddingDays === day && nav === 0) daySquare.id = 'currentDay';
 
-      if (i - paddingDays === day && nav === 0) {
-        daySquare.id = 'currentDay';
-      }
-
-      if (eventForDay) {
+      events.filter(e => e.date === dayString).forEach((eventForDay, i) => {
+        if (i >= 2) return;
         const eventDiv = document.createElement('div');
         eventDiv.classList.add('event');
-        eventDiv.innerText = eventForDay.title;
+        eventDiv.innerText = `${new Date(eventForDay.startDate).toLocaleTimeString(undefined,{hour:'numeric',minute:'numeric'})}-${new Date(eventForDay.endDate).toLocaleTimeString(undefined,{hour:'numeric',minute:'numeric'})} ${eventForDay.title}`;
+        eventDiv.addEventListener('click', (e) => { e.stopPropagation(); openModal(dayString, eventForDay) });
         daySquare.appendChild(eventDiv);
-      }
+      });
 
       daySquare.addEventListener('click', () => openModal(dayString));
     } else {
@@ -141,27 +155,40 @@ function closeModal() {
   load();
 }
 
-function saveEvent() {
+function saveEvent(e) {
+  let inputs = Array.from(e.target.parentElement.childNodes).filter(e=>e.nodeName=='INPUT')
   eventTitleInput = document.getElementById('eventTitleInput');
-  if (eventTitleInput.value) {
-    eventTitleInput.classList.remove('error');
+  if (inputs.filter(e=>e.value=='').length == 0) {
+    inputs.forEach(e=>e.classList.remove('error'));
 
     events.push({
       date: clicked,
-      title: eventTitleInput.value,
+      title: inputs[0].value,
+      date: new Date(clicked + " " + inputs[1].value).toLocaleDateString('en-US'),
+      startDate: new Date(clicked + " " + inputs[1].value).toLocaleString('en-US'), //.toISOString(),
+      endDate: new Date(clicked + " " + inputs[2].value).toLocaleString('en-US'), //.toISOString(),
     });
 
     localStorage.setItem('events', JSON.stringify(events));
     closeModal();
   } else {
-    eventTitleInput.classList.add('error');
+    inputs.filter(e=>e.value=='').forEach(e=>e.classList.add('error'));
   }
+  initNotifications();
+
 }
 
 function deleteEvent() {
-  events = events.filter(e => e.date !== clicked);
-  localStorage.setItem('events', JSON.stringify(events));
-  closeModal();
+  const regex = /Title: ([^\n]+)\nFrom: ([0-9-\ :\/,APM]+)\nTo: ([0-9- :\/\,APM]+)/;
+  const eventText = document.getElementById('eventText').innerText;
+  let m;
+  if ((m = regex.exec(eventText)) !== null) {
+    let [_, title, startDate, endDate] = m;
+    events = events.filter(e => !(e.date == clicked && e.title == title && e.startDate == startDate && e.endDate == endDate));
+    localStorage.setItem('events', JSON.stringify(events));
+    closeModal();
+    initNotifications();
+  }
 }
 
 function setTheme(theme) {
@@ -187,8 +214,8 @@ function initButtons() {
 
   document.querySelectorAll('#saveButton')  .forEach(e=>e.addEventListener('click', (e) => saveEvent(e)));
   document.querySelectorAll('#cancelButton').forEach(e=>e.addEventListener('click', () => closeModal()));
-  document.getElementById('deleteButton').addEventListener('click', () => deleteEvent());
-  document.getElementById('closeButton').addEventListener('click', () => closeModal());
+  document.querySelectorAll('#deleteButton').forEach(e=>e.addEventListener('click', () => deleteEvent()));
+  document.querySelectorAll('#closeButton') .forEach(e=>e.addEventListener('click', () => closeModal()));
   document.getElementById('modalBackDrop').addEventListener("click",() => closeModal());
 
   document.addEventListener('keyup', (e) => {if (("key" in e && e.key === "Escape") || (e.keyCode == 27)) closeModal();});
@@ -206,6 +233,14 @@ function initDarkmode() {
 		if (e.target.checked) setTheme('dark')
 		else setTheme('light');
 	}, false);
+}
+
+function initNotifications() {
+	cancelNotifications();
+	if (events) {
+		const notpassed = events.filter(a => new Date(a.startDate) > new Date());
+		notpassed.forEach(e=>sendNotificationAfter(0, 'Event started: ' + e.title, new Date(e.startDate)));
+	}
 }
 
 if ( window.addEventListener ) {
@@ -227,22 +262,14 @@ function ical_download(download=true){
 		    event = new ICAL.Event(vevent);
 		event.summary = events[i].title;
 		event.uid = 'abcdef...';
-		event.startDate = ICAL.Time.fromJSDate(new Date(events[i].date), false);
-		//event.startDate = ICAL.Time.now();
+		event.startDate = ICAL.Time.fromJSDate(new Date(events[i].startDate), false);
+		event.endDate = ICAL.Time.fromJSDate(new Date(events[i].endDate), false);
 		comp.addSubcomponent(vevent);
 	}
 
 	var iCalendarData = comp.toString();
 
-	/*
-	var jcalData = ICAL.parse(iCalendarData);
-	var vcalendar = new ICAL.Component(jcalData);
-	var vevent = vcalendar.getFirstSubcomponent('vevent');
-	var summary = vevent.getFirstPropertyValue('summary');
-	console.log('Summary: ' + summary);
-	*/
 	this.fileName = "my-event.ics";
-
 	this._save = function(fileURL){
 		if (!window.ActiveXObject) {
 			var save = document.createElement('a');
@@ -270,6 +297,43 @@ function ical_download(download=true){
 	if (download) this._save( "data:text/calendar;charset=utf8," + escape(iCalendarData));
 }
 
+
+function ical_load(iCalendarData) {
+  const jcalData = ICAL.parse(iCalendarData);
+  const vcalendar = new ICAL.Component(jcalData);
+  const vevents = vcalendar.getAllSubcomponents('vevent');
+  vevents.forEach((vevent) => {
+    const event = new ICAL.Event(vevent);
+    const eventObject = {
+      "title": event.summary,
+      "date": event.startDate.toJSDate().toLocaleDateString('en-US'),
+      "startDate": event.startDate.toJSDate().toLocaleString('en-US'),
+      "endDate": event.endDate.toJSDate().toLocaleString('en-US')
+    }
+    if (!arrayContainsObject(events, eventObject)) events.push(eventObject);
+  })
+  localStorage.setItem('events', JSON.stringify(events));
+  load();
+  return events;
+}
+
+document.body.insertAdjacentHTML("beforeend", '<input type="file" id="file-selector" accept=".ics" hidden>');
+const fileSelector = document.querySelector('#file-selector')
+fileSelector.addEventListener('change', (event) => {
+  const fileList = event.target.files;
+  const reader = new FileReader();
+  reader.addEventListener('load', (event) => {
+    const result = event.target.result;
+    ical_load(atob(unescape(result.replace("data:text/calendar;base64,",""))));
+  });
+  reader.readAsDataURL(fileList[0]);
+});
+
+function start_ical_loader() {
+  document.querySelector('#file-selector')?.click();
+}
+
 initButtons();
 initDarkmode();
+initNotifications();
 load();

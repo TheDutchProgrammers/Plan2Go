@@ -100,7 +100,6 @@ const load2 = () => {
 
 function saveEvent2(e) {
   let inputs = Array.from(e.target.parentElement.childNodes).filter(e=>e.nodeName=='INPUT')
-  console.log(inputs);
   eventTitleInput = document.getElementById('eventTitleInput');
   if (inputs.filter(e=>e.value=='').length == 0) {
     inputs.forEach(e=>e.classList.remove('error'));
@@ -108,6 +107,7 @@ function saveEvent2(e) {
     events.push({
       date: clicked,
       title: inputs[0].value,
+      date: new Date(clicked + " " + inputs[1].value).toLocaleDateString('en-US'),
       startDate: new Date(clicked + " " + inputs[1].value).toLocaleString('en-US'), //.toISOString(),
       endDate: new Date(clicked + " " + inputs[2].value).toLocaleString('en-US'), //.toISOString(),
     });
@@ -132,7 +132,7 @@ function openModal2(date, eventForDay = null) {
 }
 
 function deleteEvent2() {
-  const regex = /Title: ([a-zA-Z0-9_\-\.]+)\nFrom: ([0-9-\ :\/,APM]+)\nTo: ([0-9- :\/\,APM]+)/;
+  const regex = /Title: ([^\n]+)\nFrom: ([0-9-\ :\/,APM]+)\nTo: ([0-9- :\/\,APM]+)/;
   const eventText = document.getElementById('eventText').innerText;
   let m;
   if ((m = regex.exec(eventText)) !== null) {
@@ -140,6 +140,7 @@ function deleteEvent2() {
     events = events.filter(e => !(e.date == clicked && e.title == title && e.startDate == startDate && e.endDate == endDate));
     localStorage.setItem('events', JSON.stringify(events));
     closeModal();
+    initNotifications();
   }
 }
 
@@ -188,8 +189,6 @@ function ical_download2(download=true){
   else return iCalendarData;
 }
 
-// Credits to https://stackoverflow.com/a/70679783
-const arrayContainsObject = (array, object) => array.some(item => Object.keys(item).every(key => item[key] === object[key]))
 
 function ical_load(iCalendarData) {
   const jcalData = ICAL.parse(iCalendarData);
@@ -215,18 +214,6 @@ function start_ical_loader() {
   document.querySelector('#file-selector')?.click();
 }
 
-document.body.insertAdjacentHTML("beforeend", '<input type="file" id="file-selector" accept=".ics" hidden>');
-const fileSelector = document.querySelector('#file-selector')
-fileSelector.addEventListener('change', (event) => {
-  const fileList = event.target.files;
-  const reader = new FileReader();
-  reader.addEventListener('load', (event) => {
-    const result = event.target.result;
-    ical_load(atob(unescape(result.replace("data:text/calendar;base64,",""))));
-  });
-  reader.readAsDataURL(fileList[0]);
-});
-
 setTimeout(() => {
   globalThis.load = () => load2();
   globalThis.ical_download = () => ical_download2();	
@@ -239,6 +226,7 @@ setTimeout(() => {
   window.modals['settings'] = new Modal({ id: "settings", title: "Settings", body: '<p>Needs to be done!</p><button id="exportCalendar">Export</button><button id="importCalendar">Import</button><br><br>', extrabutton: "Save", opener: "#setting > i" });
   window.modals['settings'].element.querySelector("#exportCalendar").addEventListener("click", () => ical_download());
   window.modals['settings'].element.querySelector("#importCalendar").addEventListener("click", () => start_ical_loader());
+
 
   //initButtons();
   load2();
