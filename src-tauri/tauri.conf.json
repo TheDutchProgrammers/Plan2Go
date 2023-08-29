@@ -9,13 +9,16 @@
   },
   "package": {
     "productName": "plan2go_desktop",
-    "version": "0.1.0"
+    "version": "0.1.1"
   },
   "tauri": {
     "allowlist": {
       "all": false,
       "notification": {
         "all": true
+      },
+      "dialog": {
+        "message": true
       }
     },
     "bundle": {

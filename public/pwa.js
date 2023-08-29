@@ -1,18 +1,17 @@
 window.addEventListener("load", () => {
 	if ("serviceWorker" in navigator) {
-		navigator.serviceWorker.register("service-worker.js");
+		const a = location.pathname.split("/"); a.pop(); const root = (a.join('/') + '/').replace(/\/demo\/.*/,'/'); 
+
+		navigator.serviceWorker.register(root + "service-worker.js");
+
 		navigator.serviceWorker.addEventListener('message', event => console.log(event.data));
 	}
 	if ("__TAURI__" in window) {
-		class TimestampTrigger{
-			constructor(timestamp) {this.timestamp = timestamp;}
-		}
-		window.TimestampTrigger = TimestampTrigger;
 		Notification.notifications = [];
 		Notification.showNotification = (title, option={}) => {
 			if (typeof(title) == 'object') option = title;
 			if (!("title" in option)) option.title = title;
-			if ("showTrigger" in option) Notification.notifications.push(setTimeout(() => new Notification(option.title, option), option.showTrigger.timestamp - new Date().getTime()));
+			if ("timestamp" in option) Notification.notifications.push(setTimeout(() => new Notification(option.title, option), option.timestamp - new Date().getTime()));
 			else new Notification(option.title, option);
 		}
 		Notification.getNotifications = (options={}) => {
@@ -28,25 +27,26 @@ window.addEventListener("load", () => {
 	}
 });
 
-document.querySelector('#notification-button').onclick = async () => {
+async function sendNotificationAfter(seconds=5, body='Hello World', timestamp=null) {
 	let reg = await navigator.serviceWorker.getRegistration();
 	if ("__TAURI__" in window) reg = Notification;
 	Notification.requestPermission().then(permission => {
 		if (permission !== 'granted') {
 			alert('you need to allow push notifications');
 		} else {
-			const timestamp = new Date().getTime() + 5 * 1000; // now plus 5000ms
+			if (!timestamp) timestamp = new Date().getTime() + seconds * 1000; // now plus 5000ms
+			const a = location.pathname.split("/"); a.pop(); const root = (a.join('/') + '/').replace(/\/demo\/.*/,'/'); 
 			reg.showNotification(
 				'Demo Push Notification',
 				{
 					tag: timestamp, // a unique ID
-					body: 'Hello World', // content of the push notification
-					showTrigger: new TimestampTrigger(timestamp), // set the time for the push notification
+					body: body, // content of the push notification
+					timestamp: Math.floor(timestamp), // set the time for the push notification
 					data: {
 						url: window.location.href, // pass the current url to the notification
 					},
-					badge: '/images/icon.png',
-					icon: '/images/icon.png',
+					badge: root + 'images/icon.png',
+					icon: root + 'images/icon.png',
 					actions: [
 						{
 							action: 'open',
@@ -61,14 +61,16 @@ document.querySelector('#notification-button').onclick = async () => {
 			);
 		}
 	});
-};
-document.querySelector('#notification-cancel').onclick = async () => {
+}
+async function cancelNotifications() {
 	let reg = await navigator.serviceWorker.getRegistration();
 	if ("__TAURI__" in window) reg = Notification;
 	const notifications = await reg.getNotifications({
 		includeTriggered: true
 	});
 	notifications.forEach(notification => notification.close());
-	console.log(`${notifications.length} notification(s) cancelled`);
-};
+	return `${notifications.length} notification(s) cancelled`;
+}
 
+document.querySelector('#notification-button')?.addEventListener("click", () => sendNotificationAfter(5))
+document.querySelector('#notification-cancel')?.addEventListener("click", async () => alert(await cancelNotifications()))
