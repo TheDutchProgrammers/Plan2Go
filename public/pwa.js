@@ -37,7 +37,7 @@ async function sendNotificationAfter(seconds=5, body='Hello World', timestamp=nu
 			if (!timestamp) timestamp = new Date().getTime() + seconds * 1000; // now plus 5000ms
 			const a = location.pathname.split("/"); a.pop(); const root = (a.join('/') + '/').replace(/\/demo\/.*/,'/'); 
 			reg.showNotification(
-				'Demo Push Notification',
+				'Plan2Go',
 				{
 					tag: timestamp, // a unique ID
 					body: body, // content of the push notification
