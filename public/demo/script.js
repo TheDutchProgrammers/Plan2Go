@@ -97,7 +97,12 @@ function openModal(date, eventForDay = null) {
 function load() {
   const dt = new Date();
 
-  if (nav !== 0) dt.setMonth(new Date().getMonth() + nav);
+  if (nav !== 0) {
+    // If today is 31th, we need to set the date to 1, cause else we will 'skip' months
+    // since if the next month is to 30, then 31 - 30 = next month 1st.
+    if (dt.getDate() == 31) dt.setDate(1);
+    dt.setMonth(dt.getMonth() + nav);
+  }
 
   const day = dt.getDate();
   const month = dt.getMonth();
