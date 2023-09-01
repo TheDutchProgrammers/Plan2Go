@@ -47,7 +47,7 @@ jobs:
         if: ${{ matrix.android }}
         with:
           distribution: 'temurin'
-          java-version: '11' 
+          java-version: '17'
 
       - name: Setup NDK 
         uses: nttld/setup-ndk@v1
