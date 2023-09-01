@@ -1,1 +1,2 @@
-npm run dev
+call npm run dev
+pause

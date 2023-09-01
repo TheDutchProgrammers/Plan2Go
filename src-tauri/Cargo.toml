@@ -1,6 +1,6 @@
 [package]
 name = "app"
-version = "0.1.0"
+version = "0.1.1"
 description = "Plan2Go is an open source calender software made for the YH4F 2023."
 authors = ["Miniontoby"]
 license = ""
@@ -12,12 +12,14 @@ rust-version = "1.59"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-tauri-build = { version = "2.0.0-alpha.1", features = [] }
+tauri-build = { version = "2.0.0-alpha.8", features = [] }
 
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "2.0.0-alpha.3", features = ["dialog-message", "notification-all", "system-tray"] }
+tauri = { version = "2.0.0-alpha.11", features = ["tray-icon"] }
+tauri-plugin-dialog = "2.0.0-alpha"
+tauri-plugin-notification = "2.0.0-alpha"
 
 [target.'cfg(any(target_os = "windows", target_os = "macos"))'.dependencies]
 notify-rust = "4"
@@ -25,13 +27,16 @@ notify-rust = "4"
 [target.'cfg(any(target_os = "linux", target_os = "mobile"))'.dependencies]
 notify-rust = { version = "4", default-features = false }
 
+#[patch.crates-io]
+#tauri = { git = "https://github.com/tauri-apps/tauri.git", tag = "tauri-v2.0.0-alpha.3" }
+
 [features]
 # by default Tauri runs in production mode
 # when `tauri dev` runs it is executed with `cargo run --no-default-features` if `devPath` is an URL
-default = [ "custom-protocol" ]
+default = ["custom-protocol"]
 # this feature is used for production builds where `devPath` points to the filesystem
 # DO NOT remove this
-custom-protocol = [ "tauri/custom-protocol" ]
+custom-protocol = ["tauri/custom-protocol"]
 
 [lib]
 crate-type = ["staticlib", "cdylib", "rlib"]

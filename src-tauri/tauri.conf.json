@@ -12,15 +12,6 @@
     "version": "0.1.1"
   },
   "tauri": {
-    "allowlist": {
-      "all": false,
-      "notification": {
-        "all": true
-      },
-      "dialog": {
-        "message": true
-      }
-    },
     "bundle": {
       "active": true,
       "category": "DeveloperTool",
@@ -56,13 +47,6 @@
     },
     "security": {
       "csp": null
-    },
-    "systemTray": {
-      "iconPath": "icons/icon.png",
-      "iconAsTemplate": true
-    },
-    "updater": {
-      "active": false
     },
     "windows": [
       {
