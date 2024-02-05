@@ -1,11 +1,11 @@
 [package]
-name = "app"
+name = "plan2go_desktop"
 version = "0.1.1"
 description = "Plan2Go is an open source calender software made for the YH4F 2023."
 authors = ["Miniontoby"]
 license = ""
 repository = "https://edugit.org/thedutchprogrammers/plan2go"
-default-run = "app"
+default-run = "plan2go_desktop"
 edition = "2021"
 rust-version = "1.59"
 
