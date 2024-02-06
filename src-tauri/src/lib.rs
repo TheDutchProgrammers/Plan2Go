@@ -13,7 +13,8 @@ pub fn run() {
     .plugin(tauri_plugin_dialog::init())
     .plugin(tauri_plugin_notification::init())
     .setup(|app| {
-      if cfg!(desktop) {
+      #[cfg(desktop)]
+      {
         app.handle().plugin(tauri_plugin_updater::Builder::new().build())?;
 
         let hide = MenuItemBuilder::with_id("togglehideshow", "Hide").build(app)?;
@@ -62,7 +63,8 @@ pub fn run() {
       }
       Ok(())
     });
-  if cfg!(desktop) {
+  #[cfg(desktop)]
+  {
     builder
       .build(tauri::generate_context!())
       .expect("error while building tauri application")
@@ -116,7 +118,9 @@ pub fn run() {
         }
         _ => {}
       }); // End of '.run(..., {'
-  } else {
+  }
+  #[cfg(not(desktop))]
+  {
     builder
       .run(tauri::generate_context!())
       .expect("error while running tauri application");
