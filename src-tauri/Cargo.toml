@@ -1,6 +1,6 @@
 [package]
 name = "plan2go_desktop"
-version = "0.1.1"
+version = "0.1.2"
 description = "Plan2Go is an open source calender software made for the YH4F 2023."
 authors = ["Miniontoby"]
 license = ""
